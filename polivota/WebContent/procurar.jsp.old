@@ -1,0 +1,340 @@
+<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page import="control.Controller"%>
+<%@ page import="model.Turma"%>
+<%@ page import="model.Professor"%>
+<%@ page import="java.util.ArrayList"%>
+<jsp:useBean id="controller" class="control.Controller" scope="session" />
+<jsp:useBean id="disciplina" class="model.Disciplina" scope="session" />
+<jsp:useBean id="professor" class="model.Professor" scope="session" />
+<jsp:useBean id="nota" class="model.Nota" scope="session" />
+<jsp:useBean id="turma" class="model.Turma" scope="session" />
+
+<!DOCTYPE html>
+<!--
+	Trabalho de SI 2015
+	@OguraMartins
+-->
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>POLI-vota procurando</title>
+<link rel="stylesheet" type="text/css" href="semantic/dist/semantic.css">
+
+
+<!--RADAR CHART-->
+<link rel="stylesheet"
+	href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+<link rel="stylesheet" href="css/radar-chart.css">
+
+<style>
+body {
+	padding: 0px;
+}
+
+.radar-chart .area {
+	fill-opacity: 0.7;
+}
+
+.radar-chart.focus .area {
+	fill-opacity: 0.3;
+}
+
+.radar-chart.focus .area.focused {
+	fill-opacity: 0.9;
+}
+
+.area.germany, .germany .circle {
+	fill: #FFD700;
+	stroke: none;
+}
+
+.area.argentina, .argentina .circle {
+	fill: #ADD8E6;
+	stroke: none;
+}
+</style>
+
+<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+<script type="text/javascript" src="js/radar-chart.js"></script>
+
+<script type="text/javascript">
+	RadarChart.defaultConfig.color = function() {
+	};
+	RadarChart.defaultConfig.radius = 3;
+</script>
+
+<script type="text/javascript">
+	var data = [ {
+		className : 'germany', // optional can be used for styling
+		axes : [ {
+			axis : "nota1",
+			value : 4
+		}, {
+			axis : "nota2",
+			value : 6
+		}, {
+			axis : "nota3",
+			value : 8
+		}, {
+			axis : "nota4",
+			value : 5
+		}, {
+			axis : "nota5",
+			value : 9
+		} ]
+	} ];
+</script>
+
+
+<!--RADAR CHART-->
+
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+<script src="js/jquery.min.js"></script>
+<script src="js/skel.min.js"></script>
+<script src="js/skel-layers.min.js"></script>
+<script src="js/init.js"></script>
+<noscript>
+	<link rel="stylesheet" href="css/skel.css" />
+	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/style-xlarge.css" />
+</noscript>
+<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+	<!-- Header -->
+	<header id="header">
+		<section class="feature 2u 6u$(small)">
+			<img class="image fit" src="images/logo.png" alt="" />
+		</section>
+		>
+		<nav id="nav">
+			<ul>
+				<li><a href="index.jsp">Home</a></li>
+				<li><a href="avaliar.jsp">Avaliar</a></li>
+				<li><a href="procurar.jsp">Procurar</a></li>
+				<li><a href="logar.jsp">Logar</a></li>
+			</ul>
+		</nav>
+	</header>
+
+	<!-- Main -->
+	<section id="main" class="wrapper">
+		<div class="container">
+
+			<header class="major">
+				<h2>Procure!</h2>
+				<p></p>
+			</header>
+
+			<!-- Form -->
+			<!-- 			se for a primeira busca (selecionar materia) -->
+			<section>
+				<c:if test="${param.choice == null || param.choice != 'ok'}">
+					<form method="post" action="./procurar.jsp?choice=ok">
+						<div class="row uniform 50%">
+
+							<div class="12u$">
+								<div class="select-wrapper">
+									<select name="escolhaDisp" id="escolhaDisp"
+										onchange="this.form.submit()">
+										<option value="">- Selecione uma mat&eacute;ria -</option>
+										<c:forEach var="disciplina" items="${controller.materias}">
+											<option value="${disciplina.sigla} - ${disciplina.nome}">${disciplina.sigla}-
+												${disciplina.nome}</option>
+										</c:forEach>
+									</select>
+									<noscript>
+										<input type="submit" name="escolha" value="escolha">
+									</noscript>
+								</div>
+							</div>
+						</div>
+					</form>
+				</c:if>
+
+				<!-- 				se a materia ja foi selecionada exibe qual foi a escolha-->
+				<c:if test="${param.choice == 'ok'}">
+					<form method="post" action="./procurar.jsp?choice=ok">
+						<div class="row uniform 50%">
+
+							<div class="12u$">
+								<div class="select-wrapper">
+									<select name="escolhaDisp" id="escolhaDisp" disabled="disabled">
+										<option value="">${param.escolhaDisp}</option>
+									</select>
+									<noscript>
+										<input type="submit" name="escolha" value="escolha">
+									</noscript>
+								</div>
+							</div>
+						</div>
+					</form>
+				</c:if>
+
+				<form method="post" action="./procurar.jsp?choice=prof">
+					<div class="row uniform 50%">
+
+						<!-- se a materia nao foi selecionada, disable o menu e aguardar a escolha -->
+						<div class="12u$">
+							<div class="select-wrapper">
+								<c:if test="${param.choice == null || param.choice != 'ok'}">
+									<select name="category" id="category" disabled="disabled">
+										<option value="">- Selecione uma mat&eacute;ria -</option>
+									</select>
+								</c:if>
+
+								<!-- 								caso contrario carregar todos os professores e turma da materia selecionada -->
+								<c:if test="${param.choice == 'ok'}">
+									<%
+										Controller c = new Controller();
+											String nomeDisciplina = request.getParameter("escolhaDisp");
+											String[] arr = nomeDisciplina.split(" ");
+											ArrayList<Turma> professores = c.getProfessoresDisciplina(arr[0]);
+											String value = null;
+									%>
+									<select name="escolhaProf" id="escolhaProf">
+										<option value="">- Selecione um professor -</option>
+										<%
+											for (Turma t : professores) {
+										%>
+										<option
+											value="<%= t.getNuspString().concat(" ")+t.getDisciplina() %>"><%=t.getProfessor().getNome()%>
+											</option>
+										<%
+											}
+										%>
+									</select>
+								</c:if>
+							</div>
+						</div>
+
+						<div class="12u$">
+							<ul class="actions">
+								<li><input type="submit" value="Procurar" class="special" /></li>
+							</ul>
+						</div>
+					</div>
+				</form>
+			</section>
+
+			<!-- Brunin -->
+			<!-- 			se o professor foi escolhido ja entao carregar as informacoes -->
+			<section>
+				<c:if test="${param.choice == 'prof'}">
+					<div class="ui link cards">
+						<!-- 					FALTA IMPLEMENTAR A CHAMADA AA TABELA DE MEDIAS CONSOLIDADAS PARA APRESENTACAO -->
+						<!-- 					DAS NOTAS E TAGS.  -->
+						<!-- 						OBS: as notas devem ser transformadas na variavel data que esta declarada no comeco -->
+						<!-- 						da pagina. O javascript renderiza o card -->
+						<%
+							Controller c = new Controller();
+								String nomeProf = request.getParameter("escolhaProf");
+								String[] arr2 = nomeProf.split(" ");
+								Professor p = c.getProfessor(arr2[0]);
+								
+						%>
+						<div class="card">
+							<div class="content">
+								<img class="right floated small ui image" src="images/jenny.jpg">
+								<div class="header"><%=p.getNome()%></div>
+								<div class="meta">
+									<a><%=arr2[1]%></a>
+								</div>
+								<div class="description">
+									<div>
+										<i class="book icon"></i>Trabalhos semanais
+									</div>
+									<div>
+										<i class="mail outline icon"></i>Responde e-mails
+									</div>
+									<div>
+										<i class="disk outline icon"></i>Aulas com slides
+									</div>
+								</div>
+							</div>
+							<div class="extra content">
+								<div class="chart-container"></div>
+								<script type="text/javascript">
+									RadarChart.defaultConfig.levelTick = true;
+									RadarChart.draw(".chart-container", data);
+								</script>
+								<span class="right floated"> XX </span> <span> <i
+									class="user icon"></i> 151 Avalia&ccedil&otildees
+								</span>
+							</div>
+						</div>
+					</div>
+				</c:if>
+			</section>
+
+		</div>
+	</section>
+
+	<!-- Footer -->
+	<footer id="footer">
+		<div class="container">
+			<div class="row">
+				<section class="4u 6u(medium) 12u$(small)">
+					<h3>Universidade de Sao Paulo</h3>
+					<p>Escola Politecnica</p>
+					<ul class="alt">
+						<li><a href="https://uspdigital.usp.br/jupiterweb/">Jupiterweb
+								- Sistemas USP</a></li>
+						<li><a href="http://www.poli.usp.br/">poli.usp.br</a></li>
+						<li><a href="http://www.pmr.poli.usp.br/">Departamento de
+								Engenharia Mecatronica</a></li>
+					</ul>
+				</section>
+				<section class="4u 6u$(medium) 12u$(small)">
+					<h3>Centro Academicos</h3>
+					<p>bobeira</p>
+					<ul class="alt">
+						<li><a href="#">CAM</a></li>
+						<li><a href="#">CEC</a></li>
+						<li><a href="#">CEC</a></li>
+						<li><a href="#">CEN</a></li>
+					</ul>
+				</section>
+				<section class="4u$ 12u$(medium) 12u$(small)">
+					<h3>Contact Us</h3>
+					<ul class="icons">
+						<li><a href="#" class="icon rounded fa-twitter"><span
+								class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon rounded fa-facebook"><span
+								class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon rounded fa-pinterest"><span
+								class="label">Pinterest</span></a></li>
+						<li><a href="#" class="icon rounded fa-google-plus"><span
+								class="label">Google+</span></a></li>
+						<li><a href="#" class="icon rounded fa-linkedin"><span
+								class="label">LinkedIn</span></a></li>
+					</ul>
+					<ul class="tabular">
+						<li>
+							<h3>Address</h3> Cidade Universitaria<br> Av. Prof. Mello
+							Moraes, 2231<br> 05508-030 Sao Paulo - SP<br>
+						</li>
+						<li>
+							<h3>Mail</h3> <a href="#">mecatronicapoliusp@gmail.com</a>
+						</li>
+						<li>
+							<h3>Phone</h3> +55 (11) 3091-5337
+						</li>
+					</ul>
+				</section>
+			</div>
+			<ul class="copyright">
+				<li>&copy; Alunos da Engenharia Mecatronica 2015. All rights
+					reserved.</li>
+			</ul>
+		</div>
+	</footer>
+
+</body>
+</html>
