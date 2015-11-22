@@ -1,10 +1,15 @@
 package control;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import model.Disciplina;
+import model.dao.DisciplinaDAO;
 
 /**
  * Servlet implementation class ListaDisciplinaServlet
@@ -39,6 +44,10 @@ public class ListaDisciplinaProcurarServlet extends HttpServlet {
 	
 //	LOGICA DE NEGOCIO AQUI
 	protected void process(HttpServletRequest request, HttpServletResponse response){
+		
+		DisciplinaDAO dao = new DisciplinaDAO();
+		ArrayList<Disciplina> listaDisciplinas = dao.getLista();
+		request.setAttribute("disciplinas", listaDisciplinas);
 		
 	}
 

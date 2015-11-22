@@ -43,26 +43,6 @@
     <url-pattern>/logged/LogoutServlet.do</url-pattern>
   </servlet-mapping>
   <servlet>
-    <description>busca disciplina no procurar.jsp</description>
-    <display-name>DisciplinaServlet</display-name>
-    <servlet-name>DisciplinaServlet</servlet-name>
-    <servlet-class>control.DisciplinaServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DisciplinaServlet</servlet-name>
-    <url-pattern>/DisciplinaServlet.do</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <description>busca os professores no procurar.jsp</description>
-    <display-name>ProfessorServlet</display-name>
-    <servlet-name>ProfessorServlet</servlet-name>
-    <servlet-class>control.ProfessorServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ProfessorServlet</servlet-name>
-    <url-pattern>/ProfessorServlet.do</url-pattern>
-  </servlet-mapping>
-  <servlet>
     <description>troca os comentarios da disciplina para professor no procurar.jsp</description>
     <display-name>ComentariosProfessorServlet</display-name>
     <servlet-name>ComentariosProfessorServlet</servlet-name>
@@ -85,12 +65,12 @@
   </servlet-mapping>
   <servlet>
     <description>carrega o dropdown com as disciplinas</description>
-    <display-name>ListaDisciplinaServlet</display-name>
+    <display-name>ListaDisciplinaProcurarServlet</display-name>
     <servlet-name>ListaDisciplinaServlet</servlet-name>
-    <servlet-class>control.ListaDisciplinaServlet</servlet-class>
+    <servlet-class>control.ListaDisciplinaProcurarServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>ListaDisciplinaServlet</servlet-name>
+    <servlet-name>ListaDisciplinaProcurarServlet</servlet-name>
     <url-pattern>/procurar.jsp</url-pattern>
   </servlet-mapping>
   <servlet>

@@ -88,10 +88,10 @@ body {
 		>
 		<nav id="nav">
 			<ul>
-				<li><a href="index.html">Home</a></li>
-				<li><a href="avaliar.html">Avaliar</a></li>
-				<li><a href="procurar.html">Procurar</a></li>
-				<li><a href="logar.html">Logar</a></li>
+				<li><a href="index.jsp">Home</a></li>
+				<li><a href="avaliar.jsp">Avaliar</a></li>
+				<li><a href="procurar.jsp">Procurar</a></li>
+				<li><a href="logar.jsp">Logar</a></li>
 			</ul>
 		</nav>
 	</header>
